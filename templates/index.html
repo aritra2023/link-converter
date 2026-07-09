@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tg Pro Converter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <h1><i class="fa-solid fa-bolt"></i> Tg Pro Converter</h1>
+    
+    <div id="loginSection" class="section hidden">
+        <label>Telegram Phone Number:</label>
+        <div class="input-group">
+            <i class="fa-solid fa-phone"></i>
+            <input type="text" id="phoneInput" placeholder="+919876543210">
+        </div>
+        <button class="btn" id="otpBtn" onclick="sendOTP()"><i class="fa-solid fa-paper-plane"></i> Send OTP</button>
+        
+        <div id="otpBox" class="hidden" style="margin-top: 20px;">
+            <div class="input-group">
+                <i class="fa-solid fa-comment-sms"></i>
+                <input type="text" id="otpInput" placeholder="Enter OTP Code">
+            </div>
+            <div class="input-group">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="passInput" placeholder="2FA Password (If enabled)">
+            </div>
+            <button class="btn" onclick="verifyOTP()"><i class="fa-solid fa-right-to-bracket"></i> Login</button>
+        </div>
+    </div>
+
+    <div id="mainDashboard" class="hidden">
+        
+        <div style="text-align: center; margin-bottom: 20px;">
+            <div class="user-info" id="userInfo" style="margin-bottom: 10px;"></div>
+            <button class="btn btn-outline" onclick="logoutAccount()" style="display: inline-flex; width: auto; padding: 6px 15px; font-size: 12px; border-color: var(--danger); color: var(--danger);"><i class="fa-solid fa-right-from-bracket"></i> Logout Account</button>
+        </div>
+
+        <div class="section">
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <label style="margin: 0; font-size: 13px; color: var(--text-main); font-weight: 500;">Auto-Cloner (ID or Link):</label>
+                
+                <div style="display: flex; gap: 15px; align-items: center;">
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; color: var(--text-main); margin: 0;">
+                        <input type="radio" name="cloneType" value="channel" checked style="accent-color: #9d4edd; width: 16px; height: 16px; cursor: pointer;"> Channel
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; color: var(--text-main); margin: 0;">
+                        <input type="radio" name="cloneType" value="group" style="accent-color: #9d4edd; width: 16px; height: 16px; cursor: pointer;"> Group
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; font-size: 13px; color: var(--text-main); margin: 0;">
+                        <input type="radio" name="cloneType" value="both" style="accent-color: #9d4edd; width: 16px; height: 16px; cursor: pointer;"> Both
+                    </label>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <i class="fa-solid fa-clone"></i>
+                <input type="text" id="cloneSource" placeholder="e.g., https://t.me/c/12345/1 or -100123...">
+            </div>
+
+            <button class="btn btn-outline" id="cloneBtn" onclick="cloneAndForward()"><i class="fa-solid fa-wand-magic-sparkles"></i> Clone & Auto-Forward</button>
+            <div id="cloneMsg" class="clone-msg"></div>
+        </div>
+
+        <div class="section">
+            <label>Source (Message Link or ID):</label>
+            <div class="input-group">
+                <i class="fa-solid fa-link"></i>
+                <input type="text" id="sourceId" placeholder="Paste link or ID here">
+            </div>
+            
+            <label>Target (Auto-fills on Clone):</label>
+            <div class="input-group">
+                <i class="fa-solid fa-bullseye"></i>
+                <input type="text" id="targetId" placeholder="Target ID">
+            </div>
+            
+            <label>What to Forward?</label>
+            <div class="switch-box">
+                <div class="switch-row">
+                    <span><i class="fa-solid fa-image"></i> Images</span>
+                    <label class="switch"><input type="checkbox" class="media-cb" value="img" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                    <span><i class="fa-solid fa-video"></i> Videos</span>
+                    <label class="switch"><input type="checkbox" class="media-cb" value="vid" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                    <span><i class="fa-solid fa-music"></i> Audio</span>
+                    <label class="switch"><input type="checkbox" class="media-cb" value="aud"><span class="slider"></span></label>
+                </div>
+                <div class="switch-row">
+                    <span><i class="fa-solid fa-file"></i> Document</span>
+                    <label class="switch"><input type="checkbox" class="media-cb" value="doc"><span class="slider"></span></label>
+                </div>
+                <div class="switch-row" style="border-bottom: none;">
+                    <span><i class="fa-solid fa-font"></i> Text Only</span>
+                    <label class="switch"><input type="checkbox" class="media-cb" value="txt"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <label>Transfer Settings:</label>
+            <div class="switch-box">
+                <div class="switch-row">
+                    <span><i class="fa-solid fa-closed-captioning"></i> Keep Caption</span>
+                    <label class="switch"><input type="checkbox" id="keep_cap" checked><span class="slider"></span></label>
+                </div>
+                <div class="switch-row" style="border-bottom: none;">
+                    <span><i class="fa-solid fa-share"></i> Keep Forward Tag</span>
+                    <label class="switch"><input type="checkbox" id="keep_tag"><span class="slider"></span></label>
+                </div>
+            </div>
+            
+            <div class="slider-box">
+                <div class="slider-header"><span>Message Delay</span> <span id="delayVal">2s</span></div>
+                <input type="range" id="delaySlider" min="1" max="10" step="0.5" value="2" oninput="document.getElementById('delayVal').innerText = this.value + 's'">
+            </div>
+
+            <div class="slider-box">
+                <div class="slider-header"><span>Batch Size (Items)</span> <span id="bSizeVal">50</span></div>
+                <input type="range" id="bSizeSlider" min="10" max="200" step="5" value="50" oninput="document.getElementById('bSizeVal').innerText = this.value">
+            </div>
+            
+            <div class="slider-box">
+                <div class="slider-header"><span>Batch Rest Gap</span> <span id="restVal">15s</span></div>
+                <input type="range" id="restSlider" min="5" max="60" step="1" value="15" oninput="document.getElementById('restVal').innerText = this.value + 's'">
+            </div>
+            
+            <button class="btn" id="startBtn" onclick="startTransfer()"><i class="fa-solid fa-rocket"></i> Start Transfer</button>
+            <button class="btn btn-stop" id="stopBtn" onclick="stopTransfer()"><i class="fa-solid fa-hand"></i> Stop Transfer</button>
+        </div>
+
+        <div class="status-box">
+            <div id="statusText" class="status-text">Ready to launch...</div>
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function checkStatus() {
+        let res = await fetch('/api/status'); 
+        let data = await res.json();
+        
+        if (data.logged_in) {
+            document.getElementById('loginSection').classList.add('hidden');
+            document.getElementById('mainDashboard').classList.remove('hidden');
+            document.getElementById('userInfo').innerHTML = '<i class="fa-solid fa-circle-user"></i> Logged in as: ' + data.user;
+        } else {
+            document.getElementById('loginSection').classList.remove('hidden');
+            document.getElementById('mainDashboard').classList.add('hidden');
+        }
+
+        let statText = document.getElementById('statusText');
+        let prog = document.getElementById('progressFill');
+        let now = Math.floor(Date.now() / 1000);
+
+        if (data.is_running && data.wait_until && data.wait_until > now) {
+            let remaining = data.wait_until - now;
+            statText.innerHTML = `<i class="fa-solid fa-clock"></i> Anti-Spam Wait: <b>${remaining}s</b> remaining...`;
+            statText.style.color = "var(--danger)";
+        } else {
+            statText.innerHTML = data.status;
+            statText.style.color = "var(--text-main)";
+        }
+
+        if(data.total > 0) {
+            prog.style.width = ((data.sent / data.total) * 100) + '%';
+        }
+        
+        document.getElementById('startBtn').style.display = data.is_running ? 'none' : 'flex';
+        document.getElementById('stopBtn').style.display = data.is_running ? 'flex' : 'none';
+    }
+    
+    setInterval(checkStatus, 1000); 
+    checkStatus();
+
+    async function sendOTP() {
+        let phone = document.getElementById('phoneInput').value;
+        if (!phone) return alert("Pehle phone number daal bhai!");
+        
+        let btn = document.getElementById('otpBtn');
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+        btn.disabled = true;
+
+        let fd = new FormData(); fd.append('phone', phone);
+        let res = await fetch('/api/send_otp', {method: 'POST', body: fd});
+        let data = await res.json();
+        
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Send OTP';
+        btn.disabled = false;
+
+        if (data.error) {
+            alert("Error: " + data.error);
+        } else {
+            alert("✅ OTP Sent! Apna Telegram app check kar.");
+            document.getElementById('otpBox').classList.remove('hidden');
+        }
+    }
+
+    async function verifyOTP() {
+        let fd = new FormData();
+        fd.append('code', document.getElementById('otpInput').value);
+        fd.append('password', document.getElementById('passInput').value);
+        let res = await fetch('/api/verify_otp', {method: 'POST', body: fd});
+        let data = await res.json();
+        if (data.error) alert(data.error); else checkStatus();
+    }
+
+    async function logoutAccount() {
+        if(!confirm("Are you sure you want to logout from this Telegram account?")) return;
+        await fetch('/api/logout', {method: 'POST'});
+        location.reload(); 
+    }
+
+    async function cloneAndForward() {
+        let src = document.getElementById('cloneSource').value || document.getElementById('sourceId').value;
+        if (!src) return alert('Source Link or ID required!');
+        
+        let cloneType = document.querySelector('input[name="cloneType"]:checked').value;
+        
+        document.getElementById('cloneBtn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cloning...';
+        document.getElementById('cloneMsg').innerText = 'Creating requested entity...';
+        
+        let fd = new FormData(); 
+        fd.append('source_id', src);
+        fd.append('clone_type', cloneType);
+        
+        let res = await fetch('/api/clone_channel', {method: 'POST', body: fd}); 
+        let data = await res.json();
+        
+        document.getElementById('cloneBtn').innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> Clone & Auto-Forward';
+
+        if (data.success) {
+            document.getElementById('targetId').value = data.new_id;
+            document.getElementById('sourceId').value = src;
+            document.getElementById('cloneMsg').innerHTML = `<i class="fa-solid fa-circle-check"></i> ${data.message} Starting forwarding...`;
+            setTimeout(() => { startTransfer(); }, 1500);
+        } else {
+            alert(data.error);
+            document.getElementById('cloneMsg').innerHTML = '';
+        }
+    }
+
+    async function startTransfer() {
+        let filters = Array.from(document.querySelectorAll('.media-cb:checked')).map(cb => cb.value).join(',');
+        if(!filters) return alert('Select at least one media type!');
+        if(!document.getElementById('targetId').value) return alert('Target ID is missing!');
+        
+        let fd = new FormData();
+        fd.append('source_id', document.getElementById('sourceId').value);
+        fd.append('target_id', document.getElementById('targetId').value);
+        fd.append('filter_type', filters);
+        fd.append('keep_caption', document.getElementById('keep_cap').checked);
+        fd.append('keep_forward_tag', document.getElementById('keep_tag').checked);
+        fd.append('delay', document.getElementById('delaySlider').value);
+        fd.append('batch_size', document.getElementById('bSizeSlider').value);
+        fd.append('batch_gap', document.getElementById('restSlider').value);
+        
+        let res = await fetch('/api/start', {method: 'POST', body: fd});
+        let data = await res.json(); 
+        if (data.error) alert(data.error);
+        checkStatus();
+    }
+
+    async function stopTransfer() { 
+        await fetch('/api/stop', {method: 'POST'}); 
+        checkStatus(); 
+    }
+</script>
+</body>
+</html>

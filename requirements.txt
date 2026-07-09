@@ -5,3 +5,4 @@ uvicorn
 jinja2
 pydantic
 python-multipart
+cryptg
